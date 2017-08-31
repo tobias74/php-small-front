@@ -6,7 +6,7 @@ class Application
 
     public function __construct($configData)
     {
-        $this->routeManager = new \Zeitfaden\ServerContext\RouteManager();
+        $this->routeManager = new RouteManager();
         foreach ($configData['routeConfiguration'] as $route) 
         {
           $this->routeManager->addRoute(new Route(
