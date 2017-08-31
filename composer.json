@@ -3,5 +3,10 @@
     "description": "A very simple front controller for php-projects",
     "type": "library",
     "license": "MIT",
+     "autoload": {
+        "psr-4": {
+            "PhpSmallFront\\": "src/"
+        }
+    },
     "require": {}
 }
