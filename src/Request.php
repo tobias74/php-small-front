@@ -130,7 +130,7 @@ class Request
     }
     else
     {
-      throw new ZeitfadenException('file not uploaded');
+      throw new \Exception('file not uploaded');
     }
     
   }
