@@ -9,7 +9,7 @@ class Application
         $this->routeManager = new \Zeitfaden\ServerContext\RouteManager();
         foreach ($configData['routeConfiguration'] as $route) 
         {
-          $this->routeManager->addRoute(new \Zeitfaden\ServerContext\Route(
+          $this->routeManager->addRoute(new Route(
               $route['route'],
               array_intersect_key($route, ['controller' => true, 'action' => true]),
               $route['methods']
@@ -24,7 +24,7 @@ class Application
     public function run()
     {
         $request = $this->getRequest();
-        $response = new \Zeitfaden\ServerContext\Response();
+        $response = new Response();
 
         if ($request->getRequestMethod() === 'OPTIONS')
         {
@@ -33,7 +33,7 @@ class Application
 
         $this->routeManager->analyzeRequest($request);
 
-        $frontController = new \Zeitfaden\ServerContext\FrontController();
+        $frontController = new FrontController();
         $frontController->setControllerProviders( $this->controllerProviders );
         $frontController->dispatch($request,$response);
 
