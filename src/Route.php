@@ -13,7 +13,7 @@ Redistributions of source code must retain the above copyright notice, this list
 
 */
 
-namespace Zeitfaden\ServerContext;
+namespace PhpSmallFront;
 
 class Route
 {
