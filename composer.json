@@ -1,0 +1,7 @@
+{
+    "name": "tobias74/php-small-front",
+    "description": "A very simple front controller for php-projects",
+    "type": "library",
+    "license": "MIT",
+    "require": {}
+}
