@@ -1,5 +1,5 @@
 <?php
-namespace Zeitfaden\ServerContext;
+namespace PhpSmallFront;
 
 class FrontController
 {
