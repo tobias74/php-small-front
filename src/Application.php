@@ -20,11 +20,14 @@ class Application
         $this->controllerProviders = $configData['controllerProviders'];
     }
   
+    public function produceEmptyResponse()
+    {
+      return new Response();
+    }
   
-    public function run()
+    public function run($response)
     {
         $request = $this->getRequest();
-        $response = new Response();
 
         if ($request->getRequestMethod() === 'OPTIONS')
         {
