@@ -41,6 +41,35 @@ abstract class AbstractActionController
   }
 
   
+  protected function sendFile($filePath, $response)
+  {
+    
+    if (!file_exists($filePath))
+    {
+      echo "not ready yet.. transcoding.... ".$filePath;
+      throw new \ErrorException('not done yet, still transcoding.');
+    }
+    
+    
+    try
+    {
+      $fileTime = filemtime($filePath);
+
+      $fileSize = filesize($filePath);
+
+      $response->addHeader('Last-Modified: '.gmdate('D, d M Y H:i:s',$fileTime).' GMT',true,200);
+      $response->setFileName($filePath);
+      $response->addHeader('Cache-Control: maxage='.(60*60*24*31));
+      $response->addHeader('Expires: '.gmdate('D, d M Y H:i:s',time()+60*60*24*31).' GMT',true,200);
+      $response->addHeader('Content-type: '.mime_content_type($filePath));
+    }
+    catch (\Exception $e)
+    {
+      die('send back default video / (image). file with message to wait: '.$e->getMessage());
+    }
+    
+  }
+  
   
 
 }
