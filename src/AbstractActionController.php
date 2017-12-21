@@ -41,15 +41,15 @@ abstract class AbstractActionController
   }
 
   
-  protected function sendFile($filePath, $response)
+  protected function sendFile($filePath)
   {
+    $response = $this->getResponse();
     
     if (!file_exists($filePath))
     {
       echo "not ready yet.. transcoding.... ".$filePath;
       throw new \ErrorException('not done yet, still transcoding.');
     }
-    
     
     try
     {
@@ -70,6 +70,14 @@ abstract class AbstractActionController
     
   }
   
+  
+  protected function serveAsDownload($downloadName, $filePath)
+  {
+    $this->getResponse()->addHeader('Content-Disposition: inline; filename= '.$downloadName);
+    $this->getResponse()->addHeader('Content-Length: '.filesize($filePath));
+    $this->getResponse()->addHeader('Content-type: '.mime_content_type($filePath));
+    $this->getResponse()->setFileName($filePath);
+  }
   
 
 }
