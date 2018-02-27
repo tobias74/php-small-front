@@ -47,8 +47,7 @@ abstract class AbstractActionController
     
     if (!file_exists($filePath))
     {
-      echo "not ready yet.. transcoding.... ".$filePath;
-      throw new \ErrorException('not done yet, still transcoding.');
+      throw new \ErrorException('File not found for sending: '.$filePath);
     }
     
     try
