@@ -11,7 +11,7 @@ class RouteManager
     array_push($this->_routes, $route);
   }
 
-  protected function extractArgumentsFromURI($requestURI, $method)
+  public function extractArgumentsFromURI($requestURI, $method)
   {
     foreach (array_reverse($this->_routes) as $route)
     {
@@ -26,13 +26,7 @@ class RouteManager
     //return array();
     
   }
-  
-  public function analyzeRequest($request)
-  {
-    $args = $this->extractArgumentsFromURI($request->getRequestURI(), $request->getRequestMethod());
-    $request->addArguments($args);
-  }
-  
+
 }
 
 
