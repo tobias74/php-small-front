@@ -55,21 +55,14 @@ class Application
     $controller->$actionName();
   }
 
-  
-  
-
   public function run()
   {
       $params = $this->extractArgumentsFromURI($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
-
       $controllerName = ucfirst($params["controller"]);
       $controller = $this->controllerProviders[$controllerName]($params);
       $actionName = isset($params['action']) ? $params['action'] : 'index';
       $this->execute($controller,$actionName);
-
-      return $response;
   }
-    
 
 }
 
