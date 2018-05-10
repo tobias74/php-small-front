@@ -42,7 +42,30 @@ abstract class AbstractActionController
     header('ZEITFADEN-TIMER: '.$duration);    
   }
 
-
+ public function hasUploadedFile($inputName)
+  {
+    if (isset($_FILES[$inputName]['tmp_name']) && ($_FILES[$inputName]['tmp_name'] != "")) 
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
+  }
+  
+  public function getUploadedFile($inputName)
+  {
+    if (isset($_FILES[$inputName]['tmp_name']) && ($_FILES[$inputName]['tmp_name'] != "")) 
+    {
+      return $_FILES[$inputName];
+    }
+    else
+    {
+      throw new \Exception('file not uploaded');
+    }
+    
+  }
 
 
 }
