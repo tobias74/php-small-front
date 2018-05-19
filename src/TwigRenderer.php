@@ -47,6 +47,17 @@ class TwigRenderer
           }
         });
         $this->twig->addFunction($function);    
+
+        $function = new \Twig_SimpleFunction('is_checked', function ($a,$b) {
+          if ($a === $b) {
+            return " checked=\"checked\" ";
+          }
+          else {
+            return "";
+          }
+        });
+        $this->twig->addFunction($function);    
+
             
     }
     
