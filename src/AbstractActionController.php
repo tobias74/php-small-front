@@ -30,19 +30,7 @@ abstract class AbstractActionController
     return $this->_renderer->render($templateName, $data);
   }
 
-  protected function startTimer()
-  {
-    $this->startTime = microtime(true);
-  }
-  
-  protected function reportTimer()
-  {
-    $endTime = microtime(true);
-    $duration = $endTime-$this->startTime;
-    header('ZEITFADEN-TIMER: '.$duration);    
-  }
-
- public function hasUploadedFile($inputName)
+  public function hasUploadedFile($inputName)
   {
     if (isset($_FILES[$inputName]['tmp_name']) && ($_FILES[$inputName]['tmp_name'] != "")) 
     {
