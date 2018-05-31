@@ -17,7 +17,7 @@ class Application
         
       }
   
-      $this->controllerProviders = $configData['controllerProviders'];
+      $this->controllerProvider = $configData['controllerProvider'];
   }
   
   
@@ -51,7 +51,6 @@ class Application
       throw new \ErrorException("wrong Action? or what? Name:".$actionName);
     }
     
-    $actionName = $actionName;
     $controller->$actionName();
   }
 
@@ -59,7 +58,10 @@ class Application
   {
       $params = $this->extractArgumentsFromURI($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
       $controllerName = ucfirst($params["controller"]);
-      $controller = $this->controllerProviders[$controllerName]($params);
+      
+      $controllerProvider = $this->controllerProvider;
+      $controller = $controllerProvider($controllerName, $params);
+
       $actionName = isset($params['action']) ? $params['action'] : 'index';
       $this->execute($controller,$actionName);
   }
