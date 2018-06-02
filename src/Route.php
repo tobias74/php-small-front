@@ -17,14 +17,13 @@ namespace PhpSmallFront;
 
 class Route
 {
-    protected $_urlDelimiter = "/";
-    protected $_urlVariable = ":";
-    protected $_parts = array();
-    protected $_defaults = array();
-    protected $_variables = array();
-    protected $_wildcardData = array();
-    protected $_staticCount = 0;
-    protected $_methods;
+  protected $_urlDelimiter = "/";
+  protected $_urlVariable = ":";
+  protected $_parts = array();
+  protected $_defaults = array();
+  protected $_variables = array();
+  protected $_staticCount = 0;
+  protected $_methods;
     
   public function __construct($route, $defaults = array(), $methods = array('GET','POST','PUT','DELETE'))
   {
@@ -34,151 +33,93 @@ class Route
     
     if ($route !== '') 
     {
-        foreach (explode($this->_urlDelimiter, $route) as $pos => $part) 
+      foreach (explode($this->_urlDelimiter, $route) as $pos => $part) 
+      {
+        if (substr($part, 0, 1) == $this->_urlVariable) 
         {
-            if (substr($part, 0, 1) == $this->_urlVariable) 
-            {
-                $name = substr($part, 1);
-                
-                $this->_parts[$pos]     = null;
-                $this->_variables[$pos] = $name;
-            }
-            else
-            {
-                $this->_parts[$pos] = $part;
-                
-                if ($part !== '*') 
-                {
-                  $this->_staticCount++;
-                }
-            }
+          $name = substr($part, 1);
+          
+          $this->_parts[$pos]     = null;
+          $this->_variables[$pos] = $name;
         }
+        else
+        {
+          $this->_parts[$pos] = $part;
+          $this->_staticCount++;
+        }
+      }
     }
   }
   
 
-    public function match($requestURI, $method = 'GET')
+  public function match($requestURI, $method = 'GET')
+  {
+    if (!in_array($method, $this->_methods))
     {
-        if (!in_array($method, $this->_methods))
-        {
-          return false;  
-        }
-        
-        $pathStaticCount = 0;
-        $values          = array();
-        
-        $path = trim($requestURI, $this->_urlDelimiter);
-        $byQuestionMark = explode('?', $path);
-        $path = $byQuestionMark[0];
-        
-        if ($path !== '') 
-        {
-            $path = explode($this->_urlDelimiter, $path);
-
-            foreach ($path as $pos => $pathPart) 
-            {
-              //echo "<br> running through $pos with $pathPart   ";
-              
-                // Path is longer than a route, it's not a match
-                if (!array_key_exists($pos, $this->_parts)) 
-                {
-                  //echo "wehy return false here?";
-                  return false;
-                }
-                
-                
-                // If it's a wildcard, get the rest of URL as wildcard data and stop matching
-                if ($this->_parts[$pos] == '*') 
-                {
-                    $count = count($path);
-                    for($i = $pos; $i < $count; $i+=2) 
-                    {
-                        $var = urldecode($path[$i]);
-                        if (!isset($this->_wildcardData[$var]) && !isset($this->_defaults[$var]) && !isset($values[$var])) 
-                        {
-                            $this->_wildcardData[$var] = (isset($path[$i+1])) ? urldecode($path[$i+1]) : null;
-                        }
-                    }
-                    break;
-                }
-
-                $name     = isset($this->_variables[$pos]) ? $this->_variables[$pos] : null;
-                $pathPart = urldecode($pathPart);
-                $part = $this->_parts[$pos];
-                
-
-                // If it's a static part, match directly
-                if ($name === null && $part != $pathPart) 
-                {
-                  //echo "stumbled uppon something that did not match return false: $part did not match $pathPart<br>";
-                    return false;
-                }
-
-                
-                // If it's a variable store it's value for later
-                if ($name !== null) 
-                {
-                    $values[$name] = $pathPart;
-                }
-                else
-                {
-                    $pathStaticCount++;
-                }  
-            }
-        }
-
-        // Check if all static mappings have been matched
-        if ($this->_staticCount != $pathStaticCount) 
-        {
-            return false;
-        }
-
-        $return = $values + $this->_wildcardData + $this->_defaults;
-
-        // Check if all map variables have been initialized
-        foreach ($this->_variables as $var) 
-        {
-            if (!array_key_exists($var, $return)) 
-            {
-                return false;
-            }
-        }
-        
-        return $return;
-
+      return false;  
     }
-  
-  
     
-  
-  
-  
+    $pathStaticCount = 0;
+    $values          = array();
     
+    $requestURI = trim($requestURI, $this->_urlDelimiter);
+    $byQuestionMark = explode('?', $requestURI);
+    $path = $byQuestionMark[0];
+    
+    if ($path !== '') 
+    {
+      $pathParts = explode($this->_urlDelimiter, $path);
+      
+      if (count($pathParts) !== count($this->_parts))
+      {
+        return false;
+      }
+      
+      foreach ($pathParts as $pos => $pathPart) 
+      {
+
+        $name     = $this->_variables[$pos] ?? null;
+        $pathPart = urldecode($pathPart);
+        $part = $this->_parts[$pos];
+        
+
+        // If it's a static part, match directly
+        if ($name === null)
+        {
+          if ( $part != $pathPart )
+          {
+            return false;
+          }
+          else
+          {
+            $pathStaticCount++;
+          }
+        }
+        else
+        {
+          $values[$name] = $pathPart;
+        }
+
+      }
+    }
+
+    // Check if all static mappings have been matched
+    if ($this->_staticCount != $pathStaticCount) 
+    {
+        return false;
+    }
+
+    if (count($this->_variables) !== count($values))
+    {
+      return false;
+    }
+
+    return ($values + $this->_defaults);
+
+  }
+
 }
 
-
-/*
-$some = new ZeitfadenRoute('/user/:userId/:imageMode/',
-  array(
-    'controller' => 'user',
-    'action' => 'getById',
-    'imageMode' => 'withSmallImage'
-  )
-);
-
-echo "<hr>";
-$val = $some->match('/user/5');
-if ($val !== false)
-{
-  print_r($val);
-}
-else
-{
-  echo "why false?";
-}
-die();
-
-*/
 
 
 
