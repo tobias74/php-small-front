@@ -4,12 +4,18 @@ namespace PhpSmallFront;
 abstract class AbstractActionController
 {
 
-  public function __construct($params, $renderer)
+  public function __construct($params, $renderer, $session)
   {
     $this->_routeParameters = $params;
     $this->_renderer = $renderer;
+    $this->_session = $session;
   }
 
+  public function getSession()
+  {
+    return $this->_session;  
+  }
+  
   public function getParam($name, $default = false)
   {
     return (isset($this->_routeParameters[$name]) && ($this->_routeParameters[$name] !== '')) ? $this->_routeParameters[$name] : $default;
